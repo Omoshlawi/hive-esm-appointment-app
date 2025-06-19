@@ -14,6 +14,9 @@ import { showNotification } from "@mantine/notifications";
 import { handleApiErrors } from "@hive/esm-core-api";
 import { useMediaQuery } from "@mantine/hooks";
 import AppointmentBasicStep from "./steps/AppointmentBasicStep";
+import AppointmentRruleStep from "./steps/AppointmentRruleStep";
+import AppointmentParticipantsStep from "./steps/AppointmentParticipantsStep";
+import AppointmentResourcesStep from "./steps/AppointmentResourcesStep";
 
 type AppointmentFormProps = {
   appointment?: Appointment;
@@ -148,13 +151,21 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
               />
             </Tabs.Panel>
             <Tabs.Panel value={"rrule"} p={"sm"}>
-              <p>RRule</p>
+              <AppointmentRruleStep
+                onNext={() => setActiveTab("participants")}
+                onPrev={() => setActiveTab("basic")}
+              />
             </Tabs.Panel>
             <Tabs.Panel value={"participants"} p={"sm"}>
-              <p>Participants</p>
+              <AppointmentParticipantsStep
+                onNext={() => setActiveTab("resources")}
+                onPrev={() => setActiveTab("rrule")}
+              />
             </Tabs.Panel>
             <Tabs.Panel value={"resources"} p={"sm"}>
-              <p>Resources</p>
+              <AppointmentResourcesStep
+                onPrev={() => setActiveTab("participants")}
+              />
             </Tabs.Panel>
           </Tabs>
         </Paper>

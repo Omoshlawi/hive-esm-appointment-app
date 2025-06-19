@@ -1,24 +1,22 @@
+import { handleApiErrors } from "@hive/esm-core-api";
+import { InputSkeleton, When } from "@hive/esm-core-components";
 import {
-  Stack,
-  Title,
+  Alert,
+  Button,
+  Group,
+  Loader,
   Select,
+  Stack,
   TextInput,
   Textarea,
-  TagsInput,
-  Group,
-  Button,
-  Alert,
-  Loader,
+  Title,
 } from "@mantine/core";
+import { DateTimePicker } from "@mantine/dates";
 import React, { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { INPUT_ORDER } from "../../utils/constants";
+import { useAppointmentTypes, useSearchUser } from "../../hooks";
 import { AppointmentFormData } from "../../types";
-import { DateInput } from "@mantine/dates";
-import { useAppointmentTypes } from "../../hooks";
-import { InputSkeleton, When } from "@hive/esm-core-components";
-import { handleApiErrors } from "@hive/esm-core-api";
-import { useSearchUser } from "../../hooks";
+import { INPUT_ORDER } from "../../utils/constants";
 
 type AppointmentBasicsStepProps = {
   onNext?: () => void;
@@ -148,7 +146,7 @@ const AppointmentBasicStep: FC<AppointmentBasicsStepProps> = ({
           control={form.control}
           name="startTime"
           render={({ field, fieldState }) => (
-            <DateInput
+            <DateTimePicker
               {...field}
               label="Start time"
               description="Must be a future time"
@@ -162,7 +160,7 @@ const AppointmentBasicStep: FC<AppointmentBasicsStepProps> = ({
           control={form.control}
           name="endTime"
           render={({ field, fieldState }) => (
-            <DateInput
+            <DateTimePicker
               {...field}
               label="End time"
               description="Must be a future time and greater than start time"
