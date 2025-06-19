@@ -1,18 +1,39 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import type { PiletApi } from '@hive/esm-shell-app';
-
-const Page = React.lazy(() => import('./Page'));
+import * as React from "react";
+import type { PiletApi } from "@hive/esm-shell-app";
+import { Appointments, AppointmentTypes } from "./pages";
+import { HeaderLink } from "@hive/esm-core-components";
 
 export function setup(app: PiletApi) {
-  app.registerPage('/page', Page);
-
-  app.showNotification('Hello from Piral!', {
-    autoClose: 2000,
-  });
-  app.registerMenu(() => <Link to="/page">Page</Link>);
-  app.registerTile(() => <div>Welcome to Piral!</div>, {
-    initialColumns: 2,
-    initialRows: 2,
-  });
+  app.registerPage(
+    "/dashboard/appointment-types",
+    () => <AppointmentTypes launchWorkspace={app.launchWorkspace} />,
+    { layout: "dashboard" }
+  );
+  app.registerPage(
+    "/dashboard/appointments",
+    () => <Appointments launchWorkspace={app.launchWorkspace} />,
+    { layout: "dashboard" }
+  );
+  app.registerMenu(
+    ({ onClose }: any) => (
+      <HeaderLink
+        label="Appointment types"
+        to={`/dashboard/appointment-types`}
+        onClose={onClose ?? (() => {})}
+        icon="calendarCog"
+      />
+    ),
+    { type: "admin" }
+  );
+  app.registerMenu(
+    ({ onClose }: any) => (
+      <HeaderLink
+        label="Appointments"
+        to={`/dashboard/appointments`}
+        onClose={onClose ?? (() => {})}
+        icon="calendar"
+      />
+    ),
+    { type: "admin" }
+  );
 }
