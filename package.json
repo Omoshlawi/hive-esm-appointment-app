@@ -1,0 +1,61 @@
+{
+  "name": "@hive/esm-appointment-app",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [
+    "pilet"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "@hive/esm-core-api": "../hive-esm-core/packages/esm-core-api/hive-esm-core-api-v1.0.0.tgz",
+    "@hive/esm-core-components": "../hive-esm-core/packages/esm-core-components/hive-esm-core-components-v1.0.0.tgz",
+    "@hive/esm-shell-app": "../hive-esm-core/packages/esm-shell-app/dist/emulator/hive-esm-shell-app-1.0.0.tgz",
+    "@types/react": "*",
+    "@types/react-dom": "*",
+    "@types/node": "latest",
+    "typescript": "latest",
+    "@mantine/core": "8.0.2",
+    "@mantine/hooks": "8.0.2",
+    "@mantine/spotlight": "8.0.2",
+    "@mantine/notifications": "8.0.2",
+    "@mantine/modals": "8.0.2",
+    "@mantine/dates": "8.0.2",
+    "@mantine/dropzone": "8.1.0",
+    "dayjs": "1.11.13",
+    "@tabler/icons-react": "3.34.0",
+    "@tanstack/react-table": "8.21.3",
+    "swr": "2.3.3",
+    "zod": "latest",
+    "@hookform/resolvers": "5.0.1",
+    "react-hook-form": "7.57.0",
+    "tslib": "2.8.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-router": "5.3.4",
+    "react-router-dom": "5.3.4",
+    "piral-cli": "1.8.5",
+    "piral-cli-esbuild": "latest"
+  },
+  "peerDependencies": {},
+  "scripts": {
+    "clean": "rm -rf node_modules && rm -f yarn.lock && yarn cache clean && yarn install",
+    "start": "pilet debug",
+    "build": "pilet build",
+    "upgrade": "pilet upgrade",
+    "postinstall": "pilet declaration"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "packageManager": "yarn@1.22.22",
+  "importmap": {
+    "inherit": [
+      "@hive/esm-shell-app"
+    ],
+    "imports": {
+      "@hookform/resolvers/zod": "@hookform/resolvers/zod"
+    }
+  },
+  "source": "src/index.tsx"
+}
