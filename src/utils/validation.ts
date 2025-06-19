@@ -18,8 +18,8 @@ export const AppointmentResourceValidator = z.object({
 export const AppointmentsValidator = z.object({
   title: z.string().nonempty(),
   description: z.string().optional(),
-  startTime: z.date({ coerce: true }),
-  endTime: z.date({ coerce: true }),
+  startTime: z.date({ coerce: true }).min(new Date(), "Must be future date"),
+  endTime: z.date({ coerce: true }).min(new Date(), "Must be future date"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
   appointmentTypeId: z.string().nonempty().uuid("Invalid"),
   organizerId: z.string().nonempty().uuid("Invalid"),
