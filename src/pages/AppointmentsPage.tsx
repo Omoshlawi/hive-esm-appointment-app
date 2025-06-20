@@ -1,12 +1,17 @@
 import { PiletApi } from "@hive/esm-shell-app";
-import React, { FC } from "react";
+import React, { FC, useMemo } from "react";
 import { useAppointments } from "../hooks";
 import { Appointment } from "../types";
 import AppointmentForm from "../forms/AppointmentForm";
 import { openConfirmModal } from "@mantine/modals";
-import { ActionIcon, Group, Text } from "@mantine/core";
+import { ActionIcon, getBaseValue, Group, Text } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
-import { StateFullDataTable, TablerIcon } from "@hive/esm-core-components";
+import {
+  DataTableColumnHeader,
+  StateFullDataTable,
+  TablerIcon,
+} from "@hive/esm-core-components";
+import { RRule } from "rrule";
 
 type AppointmentsPageProps = Pick<PiletApi, "launchWorkspace">;
 
@@ -20,9 +25,7 @@ const AppointmentsPage: FC<AppointmentsPageProps> = ({ launchWorkspace }) => {
         onCloseWorkspace={() => dispose()}
       />,
       {
-        title: appointmenttype
-          ? "Update Appointment"
-          : "Add Appointment",
+        title: appointmenttype ? "Update Appointment" : "Add Appointment",
         width: "extra-wide",
         expandable: true,
       }
@@ -85,4 +88,54 @@ const AppointmentsPage: FC<AppointmentsPageProps> = ({ launchWorkspace }) => {
 };
 
 export default AppointmentsPage;
-const columns: ColumnDef<Appointment>[] = [];
+const columns: ColumnDef<Appointment>[] = [
+  { accessorKey: "title", header: "Title" },
+  { accessorKey: "priority", header: "Priority" },
+  { accessorKey: "status", header: "Status" },
+  {
+    accessorKey: "recurrenceRule",
+    header: "Recurrent rule",
+    cell({ getValue }) {
+      const value = getValue<string>();
+      const humanDescription = useMemo(() => {
+        try {
+          const rule = RRule.fromString(value);
+          return rule.toText();
+        } catch {
+          return "Invalid rule";
+        }
+      }, [value]);
+      return humanDescription;
+    },
+  },
+  {
+    accessorKey: "startTime",
+    header({ column }) {
+      return <DataTableColumnHeader column={column} title="Start time" />;
+    },
+    cell({ getValue }) {
+      const created = getValue<string>();
+      return new Date(created).toLocaleString();
+    },
+  },
+  {
+    accessorKey: "endTime",
+    header({ column }) {
+      return <DataTableColumnHeader column={column} title="End time" />;
+    },
+    cell({ getValue }) {
+      const created = getValue<string>();
+      return new Date(created).toLocaleString();
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header({ column }) {
+      return <DataTableColumnHeader column={column} title="Date Created" />;
+    },
+    cell({ getValue }) {
+      const created = getValue<string>();
+      return new Date(created).toDateString();
+    },
+  },
+];

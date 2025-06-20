@@ -14,20 +14,20 @@ import {
 import { DateTimePicker } from "@mantine/dates";
 import React, { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { useAppointmentTypes, useSearchUser } from "../../hooks";
+import { useAppointmentTypes, useSearchPeople } from "../../hooks";
 import { AppointmentFormData } from "../../types";
 import { INPUT_ORDER } from "../../utils/constants";
 
 type AppointmentBasicsStepProps = {
   onNext?: () => void;
   onCancel?: () => void;
-  userSearchParams: ReturnType<typeof useSearchUser>;
+  personSearchParams: ReturnType<typeof useSearchPeople>;
 };
 
 const AppointmentBasicStep: FC<AppointmentBasicsStepProps> = ({
   onCancel,
   onNext,
-  userSearchParams,
+  personSearchParams,
 }) => {
   const form = useFormContext<AppointmentFormData>();
   const appointmentTypeAsync = useAppointmentTypes();
@@ -123,19 +123,20 @@ const AppointmentBasicStep: FC<AppointmentBasicsStepProps> = ({
           render={({ field, fieldState: { error } }) => (
             <Select
               {...field}
-              data={userSearchParams.users.map((p) => ({
-                label: p.username,
+              data={personSearchParams.people.map((p) => ({
+                label: p.email ?? "",
                 value: p.id,
               }))}
               placeholder="Search user"
               limit={10}
               rightSection={
-                userSearchParams.isLoading && <Loader size={"xs"} />
+                personSearchParams.isLoading && <Loader size={"xs"} />
               }
               label="Organizer"
+              
               searchable
-              searchValue={userSearchParams.searchValue}
-              onSearchChange={userSearchParams.searchUser}
+              searchValue={personSearchParams.peopleSearchValue}
+              onSearchChange={personSearchParams.searchPeople}
               error={error?.message}
               nothingFoundMessage="Nothing found..."
               clearable

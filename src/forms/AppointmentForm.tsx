@@ -7,7 +7,7 @@ import {
   useForm,
 } from "react-hook-form";
 import { Paper, Tabs, Stepper } from "@mantine/core";
-import { useAppointmentsApi, useSearchUser } from "../hooks";
+import { useAppointmentsApi, useSearchPeople, useSearchUser } from "../hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AppointmentsValidator } from "../utils/validation";
 import { showNotification } from "@mantine/notifications";
@@ -33,7 +33,7 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
 }) => {
   const { addAppointment, updateAppointment, mutateAppointments } =
     useAppointmentsApi();
-  const userSearch = useSearchUser();
+  const personSearch = useSearchPeople();
 
   const form = useForm<AppointmentFormData>({
     defaultValues: {
@@ -48,37 +48,47 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
     resolver: zodResolver(AppointmentsValidator),
   });
 
+  const navigateToErrorStep = useCallback(() => {
+    const fieldSteps: Record<
+      FormSteps,
+      Array<FieldPath<AppointmentFormData>>
+    > = {
+      basic: [
+        "title",
+        "description",
+        "appointmentTypeId",
+        "startTime",
+        "endTime",
+        "organizerId",
+        "parentId",
+        "priority",
+      ],
+      rrule: ["recurrenceRule"],
+      participants: ["participants"],
+      resources: ["resources"],
+    };
+
+    for (const [step, fields] of Object.entries(fieldSteps)) {
+      const hasError = fields.some(
+        (field) => form.getFieldState(field as any).invalid
+      );
+
+      if (hasError) {
+        setActiveTab(step as FormSteps);
+        break;
+      }
+    }
+  }, [form]);
+
   const isMobile = useMediaQuery("(max-width: 48em)");
   const [activeTab, setActiveTab] = useState<FormSteps | null>("basic");
 
-  useEffect(() => {
-    if (form.formState.errors) {
-      const fieldSteps: Record<
-        FormSteps,
-        Array<FieldPath<AppointmentFormData>>
-      > = {
-        basic: [
-          "title",
-          "description",
-          "appointmentTypeId",
-          "startTime",
-          "endTime",
-          "organizerId",
-          "parentId",
-          "priority",
-        ],
-        rrule: ["recurrenceRule"],
-        participants: ["participants"],
-        resources: ["resources"],
-      };
-      for (const [step, fields] of Object.entries(fieldSteps)) {
-        if (fields.some((field) => form.getFieldState(field as any).invalid)) {
-          setActiveTab(step as FormSteps);
-          break;
-        }
-      }
+  // Navigate to error step when form errors change
+  React.useEffect(() => {
+    if (Object.keys(form.formState.errors ?? {}).length > 0) {
+      navigateToErrorStep();
     }
-  }, [form.formState.errors, setActiveTab]);
+  }, [form.formState.errors, navigateToErrorStep]);
 
   const onSubmit: SubmitHandler<AppointmentFormData> = async (data) => {
     try {
@@ -104,6 +114,10 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
         Object.entries(e).forEach(([key, val]) =>
           form.setError(key as keyof AppointmentFormData, { message: val })
         );
+        setTimeout(() => {
+          // Without setTimeout - runs immediately in same stack:
+          navigateToErrorStep();
+        }, 0);
       }
     }
   };
@@ -147,7 +161,7 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
               <AppointmentBasicStep
                 onCancel={onCloseWorkspace}
                 onNext={() => setActiveTab("rrule")}
-                userSearchParams={userSearch}
+                personSearchParams={personSearch}
               />
             </Tabs.Panel>
             <Tabs.Panel value={"rrule"} p={"sm"}>

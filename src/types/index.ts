@@ -14,9 +14,7 @@ export type AppointmentResourceFormData = z.infer<
 >;
 export type AppointmentFormData = z.infer<typeof AppointmentsValidator>;
 export type AppointmentTypeFormData = z.infer<typeof AppointmentTypeValidator>;
-export interface Appointment {
-  id: string;
-}
+
 export interface AppointmentType {
   id: string;
   name: string;
@@ -43,4 +41,61 @@ export interface AppointmentType {
   voided: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface Property {
+  id: string;
+  name: string;
+}
+
+export interface Listing {
+  id: string;
+  title: string;
+}
+
+export interface Resource {
+  id: string;
+  name: string;
+}
+
+export interface Appointment {
+  id: string;
+  title: string;
+  description: any;
+  startTime: string;
+  endTime: string;
+  timezone: string;
+  status: string;
+  priority: string;
+  appointmentTypeId: string;
+  organizerId: string;
+  organizer: Organizer;
+  organizationId: string;
+  organization: any;
+  metadata: any;
+  voided: boolean;
+  createdAt: string;
+  updatedAt: string;
+  createdBy: string;
+  recurrenceRule: string;
+  parentId: any;
+  cancelledAt: any;
+  cancellationReason: any;
+  rescheduledFrom: any;
+}
+
+export interface Organizer {
+  id: string;
+  name: any;
+  email: string;
+  gender: string;
+  userId: string;
+  voided: boolean;
+  surname: any;
+  lastName: any;
+  avatarUrl: any;
+  createdAt: string;
+  firstName: any;
+  updatedAt: string;
+  phoneNumber: string;
 }
