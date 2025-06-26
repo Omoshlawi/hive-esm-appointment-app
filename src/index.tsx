@@ -2,6 +2,7 @@ import * as React from "react";
 import type { PiletApi } from "@hive/esm-shell-app";
 import { Appointments, AppointmentTypes } from "./pages";
 import { HeaderLink } from "@hive/esm-core-components";
+import PublicListingBookAppointment from "./components/PublicListingBookAppointment";
 
 export function setup(app: PiletApi) {
   app.registerPage(
@@ -35,5 +36,9 @@ export function setup(app: PiletApi) {
       />
     ),
     { type: "admin" }
+  );
+  app.registerExtension(
+    "public-listing-schedule-viewing-extension-slot",
+    ({ params }) => <PublicListingBookAppointment {...params} />
   );
 }

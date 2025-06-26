@@ -20,6 +20,7 @@ export const useResources = (model?: string) => {
     if (model === "Property")
       return constructUrl("/properties", {
         search: debounced,
+        
         // v: "custom:include(user)",
       });
     if (model === "Listing")
