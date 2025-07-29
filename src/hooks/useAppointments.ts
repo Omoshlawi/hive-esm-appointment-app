@@ -1,4 +1,9 @@
-import { apiFetch, APIFetchResponse, mutate } from "@hive/esm-core-api";
+import {
+  apiFetch,
+  APIFetchResponse,
+  constructUrl,
+  mutate,
+} from "@hive/esm-core-api";
 import useSWR from "swr";
 import { AppointmentFormData, Appointment } from "../types";
 
@@ -33,7 +38,9 @@ const deleteAppointment = async (
 };
 
 export const useAppointments = () => {
-  const url = `/appointments`;
+  const url = constructUrl(`/appointments`, {
+    v: "custom:include(appointmentType,participants,resources,parent,children)",
+  });
   const { data, error, isLoading, mutate } =
     useSWR<APIFetchResponse<{ results: Array<Appointment> }>>(url);
   return {

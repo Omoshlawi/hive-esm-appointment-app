@@ -19,16 +19,7 @@ export interface AppointmentType {
   id: string;
   name: string;
   description: any;
-  category:
-    | "PROPERTY_VIEWING"
-    | "INSPECTION"
-    | "CONSULTATION"
-    | "TRANSACTION"
-    | "MAINTENANCE"
-    | "TENANT_MANAGEMENT"
-    | "PHOTOGRAPHY"
-    | "LEGAL"
-    | "OTHER";
+  category: AppointmentTypeCategory;
   defaultDuration: number;
   bufferTimeBefore: number;
   bufferTimeAfter: number;
@@ -65,9 +56,17 @@ export interface Appointment {
   startTime: string;
   endTime: string;
   timezone: string;
-  status: string;
-  priority: string;
+  status:
+    | "SCHEDULED"
+    | "CONFIRMED"
+    | "IN_PROGRESS"
+    | "COMPLETED"
+    | "CANCELLED"
+    | "NO_SHOW"
+    | "RESCHEDULED";
+  priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   appointmentTypeId: string;
+  appointmentType?: AppointmentType;
   organizerId: string;
   organizer: Organizer;
   organizationId: string;
@@ -82,7 +81,20 @@ export interface Appointment {
   cancelledAt: any;
   cancellationReason: any;
   rescheduledFrom: any;
+  participants?: Array<AppointmentParticipant>;
+  resources?: Array<AppointmentResource>;
 }
+
+export type AppointmentTypeCategory =
+  | "PROPERTY_VIEWING"
+  | "INSPECTION"
+  | "CONSULTATION"
+  | "TRANSACTION"
+  | "MAINTENANCE"
+  | "TENANT_MANAGEMENT"
+  | "PHOTOGRAPHY"
+  | "LEGAL"
+  | "OTHER";
 
 export interface Organizer {
   id: string;
@@ -98,4 +110,26 @@ export interface Organizer {
   firstName: any;
   updatedAt: string;
   phoneNumber: string;
+}
+
+export interface AppointmentParticipant {
+  id: string;
+  appointmentId: string;
+  personId: string;
+  person?: any;
+  role: "ORGANIZER" | "ATTENDEE" | "OPTIONAL" | "RESOURCE_PERSON";
+  status: "PENDING" | "ACCEPTED" | "DECLINED" | "TENTATIVE";
+  isRequired: boolean;
+  respondedAt?: string;
+  notes?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+export interface AppointmentResource {
+  id: string;
+  appointmentId: string;
+  resourceId: string;
+  resource?: any;
+  resourceModel: "Listing" | "Property";
+  notes?: string;
 }

@@ -3,9 +3,10 @@ import React, { FC } from "react";
 import { AppointmentType } from "../types";
 import AppointmentTypeForm from "../forms/AppointmentTypeForm";
 import { openConfirmModal } from "@mantine/modals";
-import { ActionIcon, Group, Text } from "@mantine/core";
+import { ActionIcon, Box, Group, Stack, Text } from "@mantine/core";
 import { ColumnDef } from "@tanstack/react-table";
 import {
+  DashboardPageHeader,
   DataTableColumnHeader,
   StateFullDataTable,
   TablerIcon,
@@ -49,53 +50,62 @@ const AppointmentTypesPage: FC<AppointmentTypesPageProps> = ({
     });
   };
   return (
-    <StateFullDataTable
-      title="Appointment types"
-      onAdd={() => handleAddOrupdate()}
-      columns={[
-        ...columns,
-        {
-          id: "actions",
-          header: "Actions",
-          cell({ row }) {
-            const appointmentType = row.original;
-            return (
-              <Group>
+    <Stack>
+      <Box>
+        <DashboardPageHeader
+          title="Appointment Types"
+          subTitle={"Manage Appointment Types"}
+          icon={"calendarCog"}
+        />
+      </Box>
+      <StateFullDataTable
+        title="Appointment types"
+        onAdd={() => handleAddOrupdate()}
+        columns={[
+          ...columns,
+          {
+            id: "actions",
+            header: "Actions",
+            cell({ row }) {
+              const appointmentType = row.original;
+              return (
                 <Group>
-                  <ActionIcon
-                    variant="outline"
-                    aria-label="Settings"
-                    color="green"
-                    onClick={() => handleAddOrupdate(appointmentType)}
-                  >
-                    <TablerIcon
-                      name="edit"
-                      style={{ width: "70%", height: "70%" }}
-                      stroke={1.5}
-                    />
-                  </ActionIcon>
-                  <ActionIcon
-                    variant="outline"
-                    aria-label="Settings"
-                    color="red"
-                    onClick={() => handleDelete(appointmentType)}
-                  >
-                    <TablerIcon
-                      name="trash"
-                      style={{ width: "70%", height: "70%" }}
-                      stroke={1.5}
-                    />
-                  </ActionIcon>
+                  <Group>
+                    <ActionIcon
+                      variant="outline"
+                      aria-label="Settings"
+                      color="green"
+                      onClick={() => handleAddOrupdate(appointmentType)}
+                    >
+                      <TablerIcon
+                        name="edit"
+                        style={{ width: "70%", height: "70%" }}
+                        stroke={1.5}
+                      />
+                    </ActionIcon>
+                    <ActionIcon
+                      variant="outline"
+                      aria-label="Settings"
+                      color="red"
+                      onClick={() => handleDelete(appointmentType)}
+                    >
+                      <TablerIcon
+                        name="trash"
+                        style={{ width: "70%", height: "70%" }}
+                        stroke={1.5}
+                      />
+                    </ActionIcon>
+                  </Group>
                 </Group>
-              </Group>
-            );
+              );
+            },
           },
-        },
-      ]}
-      {...appointmentTypesAsync}
-      data={appointmentTypesAsync.appointmentTypes}
-      withColumnViewOptions
-    />
+        ]}
+        {...appointmentTypesAsync}
+        data={appointmentTypesAsync.appointmentTypes}
+        withColumnViewOptions
+      />
+    </Stack>
   );
 };
 

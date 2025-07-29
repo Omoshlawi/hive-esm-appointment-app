@@ -20,7 +20,7 @@ export const useResources = (model?: string) => {
     if (model === "Property")
       return constructUrl("/properties", {
         search: debounced,
-        
+
         // v: "custom:include(user)",
       });
     if (model === "Listing")
@@ -43,5 +43,33 @@ export const useResources = (model?: string) => {
     error,
     searchResources: setSearch,
     resourcesSearchValue: search,
+  };
+};
+
+export const useResource = (model: string, resourceId: string) => {
+  const url = useMemo(() => {
+    if (model === "Property")
+      return constructUrl(`/properties/${resourceId}`, {
+        // v: "custom:include(user)",
+      });
+    if (model === "Listing")
+      return constructUrl(`/listings/${resourceId}`, {
+        // v: "custom:include(user)",
+      });
+    return null;
+  }, [model, resourceId]);
+  const { data, error, isLoading } = useSWR<
+    APIFetchResponse<Property | Listing>
+  >(model && resourceId ? url : null);
+
+  const resource = useMemo(() => {
+    if (!data?.data) return null;
+    if (model === "Property") return propertyToResource(data.data as Property);
+    if (model === "Listing") return listingToResource(data.data as Listing);
+  }, [model, data]);
+  return {
+    resource,
+    isLoading,
+    error,
   };
 };

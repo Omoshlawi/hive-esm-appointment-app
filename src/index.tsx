@@ -3,6 +3,7 @@ import type { PiletApi } from "@hive/esm-shell-app";
 import { Appointments, AppointmentTypes } from "./pages";
 import { HeaderLink } from "@hive/esm-core-components";
 import PublicListingBookAppointment from "./components/PublicListingBookAppointment";
+import { AdminHeaderLink } from "./components/links";
 
 export function setup(app: PiletApi) {
   app.registerPage(
@@ -17,7 +18,7 @@ export function setup(app: PiletApi) {
   );
   app.registerMenu(
     ({ onClose }: any) => (
-      <HeaderLink
+      <AdminHeaderLink
         label="Appointment types"
         to={`/dashboard/appointment-types`}
         onClose={onClose ?? (() => {})}
