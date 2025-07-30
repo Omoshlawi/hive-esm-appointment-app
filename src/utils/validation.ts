@@ -21,7 +21,6 @@ export const AppointmentsValidator = z.object({
   endTime: z.date({ coerce: true }).min(new Date(), "Must be future date"),
   priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
   appointmentTypeId: z.string().nonempty().uuid("Invalid"),
-  organizerId: z.string().nonempty().uuid("Invalid"),
   recurrenceRule: z.string().optional(), // TODO USE CUSTOM RRULE VALIDATOR
   parentId: z.string().nonempty().uuid("Invalid appointment").optional(),
   participants: AppointmentParticipantValidator.omit({

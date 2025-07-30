@@ -21,7 +21,11 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 import React, { FC, useMemo } from "react";
-import { Appointment } from "../types";
+import {
+  Appointment,
+  AppointmentParticipant,
+  PropsWithLaunchWorkspace,
+} from "../types";
 import {
   getPriorityColor,
   getResourceLink,
@@ -30,11 +34,15 @@ import {
 import { RRule } from "rrule";
 import { Link } from "react-router-dom";
 import AppointmentResourceName from "./AppointmentResourceName";
-type Props = {
+import AppointmentParticipantForm from "../forms/AppointmentParticipantForm";
+type Props = PropsWithLaunchWorkspace & {
   appointment: Appointment;
 };
 
-const AppointmentExpandedRow: FC<Props> = ({ appointment }) => {
+const AppointmentExpandedRow: FC<Props> = ({
+  appointment,
+  launchWorkspace,
+}) => {
   const humanDescription = useMemo(() => {
     try {
       const rule = RRule.fromString(appointment.recurrenceRule);
@@ -43,6 +51,19 @@ const AppointmentExpandedRow: FC<Props> = ({ appointment }) => {
       return "Invalid rule";
     }
   }, [appointment]);
+
+  const handleAddParticipants = (participant: AppointmentParticipant) => {
+    const dispose = launchWorkspace(
+      <AppointmentParticipantForm
+        appointmentId={appointment.id}
+        onCloseWorkspace={() => dispose()}
+        participant={participant}
+      />,
+      {
+        title: "Add Appointment Participants",
+      }
+    );
+  };
   return (
     <Tabs defaultValue="appointment" orientation="vertical" variant="default">
       <Tabs.List>
@@ -165,7 +186,11 @@ const AppointmentExpandedRow: FC<Props> = ({ appointment }) => {
               participant.status,
               participant.respondedAt ?? "--",
               <Group>
-                <ActionIcon variant={"light"} color="green">
+                <ActionIcon
+                  variant={"light"}
+                  color="green"
+                  onClick={() => handleAddParticipants(participant)}
+                >
                   <IconEdit size={16} />
                 </ActionIcon>
                 <ActionIcon variant={"light"} color="red">

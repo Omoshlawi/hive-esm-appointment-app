@@ -5,7 +5,55 @@ import {
   mutate,
 } from "@hive/esm-core-api";
 import useSWR from "swr";
-import { AppointmentFormData, Appointment } from "../types";
+import {
+  AppointmentFormData,
+  Appointment,
+  AppointmentParticipantFormData,
+  AppointmentParticipant,
+} from "../types";
+
+const addAppointmentParticipant = async (
+  appointmentId: string,
+  data: AppointmentParticipantFormData
+) => {
+  const res = await apiFetch<AppointmentParticipant>(
+    `/appointments/${appointmentId}/participants`,
+    {
+      method: "POST",
+      data,
+    }
+  );
+  return res.data;
+};
+const updateAppointmentParticipant = async (
+  appointmentId: string,
+  particpantId: string,
+  data: AppointmentParticipantFormData,
+  method: "PUT" | "PATCH" = "PATCH"
+) => {
+  const res = await apiFetch<AppointmentParticipant>(
+    `/appointments/${appointmentId}/participants/${particpantId}`,
+    {
+      method,
+      data,
+    }
+  );
+  return res.data;
+};
+
+const deleteAppointmentParticipant = async (
+  appointmentId: string,
+  particpantId: string,
+  method: "DELETE" | "PURGE" = "DELETE"
+) => {
+  const res = await apiFetch<AppointmentParticipant>(
+    `/appointments/${appointmentId}/participants/${particpantId}`,
+    {
+      method: method,
+    }
+  );
+  return res.data;
+};
 
 const addAppointment = async (data: AppointmentFormData) => {
   const res = await apiFetch<Appointment>("/appointments", {
@@ -56,6 +104,9 @@ export const useAppointmentsApi = () => {
     addAppointment,
     updateAppointment,
     deleteAppointment,
+    addAppointmentParticipant,
+    updateAppointmentParticipant,
+    deleteAppointmentParticipant,
     mutateAppointments: () => mutate("/appointments"),
   };
 };

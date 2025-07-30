@@ -5,6 +5,7 @@ import {
   AppointmentsValidator,
   AppointmentTypeValidator,
 } from "../utils/validation";
+import { PiletApi } from "@hive/esm-shell-app";
 
 export type AppointmentParticipantFormData = z.infer<
   typeof AppointmentParticipantValidator
@@ -133,3 +134,6 @@ export interface AppointmentResource {
   resourceModel: "Listing" | "Property";
   notes?: string;
 }
+
+
+export type PropsWithLaunchWorkspace = Pick<PiletApi,"launchWorkspace">

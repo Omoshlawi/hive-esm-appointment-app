@@ -10,6 +10,7 @@ import {
   Box,
   getBaseValue,
   Group,
+  Menu,
   Stack,
   Text,
 } from "@mantine/core";
@@ -23,6 +24,7 @@ import {
 import { RRule } from "rrule";
 import AppointmentExpandedRow from "../components/AppointmentExpandedRow";
 import { getPriorityColor, getStatusColor } from "../utils/helpers";
+import AppointmentParticipantForm from "../forms/AppointmentParticipantForm";
 
 type AppointmentsPageProps = Pick<PiletApi, "launchWorkspace">;
 
@@ -59,6 +61,19 @@ const AppointmentsPage: FC<AppointmentsPageProps> = ({ launchWorkspace }) => {
       },
     });
   };
+
+  const handleAddParticipants = (appointment: Appointment) => {
+    const dispose = launchWorkspace(
+      <AppointmentParticipantForm
+        appointmentId={appointment.id}
+        onCloseWorkspace={() => dispose()}
+      />,
+      {
+        title: "Add Appointment Participants",
+      }
+    );
+  };
+
   return (
     <Stack>
       <Box>
@@ -77,24 +92,44 @@ const AppointmentsPage: FC<AppointmentsPageProps> = ({ launchWorkspace }) => {
             id: "actions",
             header: "Actions",
             cell({ row }) {
-              const listing = row.original;
+              const appointment = row.original;
               return (
-                <Group>
-                  <Group>
-                    <ActionIcon
-                      variant="outline"
-                      aria-label="Settings"
-                      color="red"
-                      onClick={() => handleDelete(listing)}
-                    >
+                <Menu>
+                  <Menu.Target>
+                    <ActionIcon variant="subtle" aria-label="Settings">
                       <TablerIcon
-                        name="trash"
+                        name="dotsVertical"
                         style={{ width: "70%", height: "70%" }}
                         stroke={1.5}
                       />
                     </ActionIcon>
-                  </Group>
-                </Group>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item
+                      leftSection={<TablerIcon name="edit" size={14} />}
+                      onClick={() => handleAddOrupdate(appointment)}
+                    >
+                      Edit Appointment
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<TablerIcon name="userPlus" size={14} />}
+                      onClick={() => handleAddParticipants(appointment)}
+                    >
+                      Add Participant
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<TablerIcon name="databasePlus" size={14} />}
+                    >
+                      Add resource
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<TablerIcon name="trash" size={14} />}
+                      onClick={() => handleDelete(appointment)}
+                    >
+                      Delete
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
               );
             },
           },
@@ -103,7 +138,10 @@ const AppointmentsPage: FC<AppointmentsPageProps> = ({ launchWorkspace }) => {
         data={appointmentsAsync.appointments}
         withColumnViewOptions
         renderExpandedRow={({ original: appointment }) => (
-          <AppointmentExpandedRow appointment={appointment} />
+          <AppointmentExpandedRow
+            appointment={appointment}
+            launchWorkspace={launchWorkspace}
+          />
         )}
       />
     </Stack>

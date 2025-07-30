@@ -11,7 +11,7 @@ import { useAppointmentsApi, useSearchPeople, useSearchUser } from "../hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AppointmentsValidator } from "../utils/validation";
 import { showNotification } from "@mantine/notifications";
-import { handleApiErrors } from "@hive/esm-core-api";
+import { handleApiErrors, parseDate } from "@hive/esm-core-api";
 import { useMediaQuery } from "@mantine/hooks";
 import AppointmentBasicStep from "./steps/AppointmentBasicStep";
 import AppointmentRruleStep from "./steps/AppointmentRruleStep";
@@ -37,13 +37,14 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
 
   const form = useForm<AppointmentFormData>({
     defaultValues: {
-      //   title: appointment?.title,
-      //   description: listing?.description,
-      //   expiryDate: listing?.expiryDate,
-      //   featured: listing?.featured,
-      //   tags: listing?.tags ?? [],
-      //   price: listing?.price ? Number(listing.price) : undefined,
-      //   type: listing?.type,
+      title: appointment?.title ?? "",
+      description: appointment?.description ?? undefined,
+      appointmentTypeId: appointment?.appointmentTypeId,
+      startTime: parseDate(appointment?.startTime, false),
+      endTime: parseDate(appointment?.endTime, false),
+      priority: appointment?.priority,
+      recurrenceRule: appointment?.recurrenceRule,
+      parentId: appointment?.parentId ?? undefined,
     },
     resolver: zodResolver(AppointmentsValidator),
   });
@@ -59,7 +60,6 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
         "appointmentTypeId",
         "startTime",
         "endTime",
-        "organizerId",
         "parentId",
         "priority",
       ],
@@ -149,12 +149,16 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
               <Tabs.Tab p={"lg"} value={"rrule"}>
                 Recurrent rule
               </Tabs.Tab>
-              <Tabs.Tab p={"lg"} value={"participants"}>
-                Participants
-              </Tabs.Tab>
-              <Tabs.Tab p={"lg"} value={"resources"}>
-                Resources
-              </Tabs.Tab>
+              {!!!appointment && (
+                <Tabs.Tab p={"lg"} value={"participants"}>
+                  Participants
+                </Tabs.Tab>
+              )}
+              {!!!appointment && (
+                <Tabs.Tab p={"lg"} value={"resources"}>
+                  Resources
+                </Tabs.Tab>
+              )}
             </Tabs.List>
 
             <Tabs.Panel value={"basic"} p={"sm"}>
@@ -166,8 +170,13 @@ const AppointmentForm: FC<AppointmentFormProps> = ({
             </Tabs.Panel>
             <Tabs.Panel value={"rrule"} p={"sm"}>
               <AppointmentRruleStep
-                onNext={() => setActiveTab("participants")}
-                onPrev={() => setActiveTab("basic")}
+                onNext={
+                  appointment ? undefined : () => setActiveTab("participants")
+                }
+                onPrev={() => {
+                  setActiveTab("basic");
+                }}
+                
               />
             </Tabs.Panel>
             <Tabs.Panel value={"participants"} p={"sm"}>

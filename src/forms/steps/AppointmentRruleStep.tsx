@@ -1,16 +1,16 @@
+import { Button, Group, Stack, Title } from "@mantine/core";
+import dayjs from "dayjs";
 import React, { FC } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { AppointmentFormData } from "../../types";
-import { Stack, Title, Group, Button } from "@mantine/core";
 import { RecurrentRuleInput } from "../../components/RRule/RecurrentRuleInput";
-import dayjs from "dayjs";
+import { AppointmentFormData } from "../../types";
 type Props = {
   onNext?: () => void;
   onPrev?: () => void;
 };
 const AppointmentRruleStep: FC<Props> = ({ onNext, onPrev }) => {
   const form = useFormContext<AppointmentFormData>();
-
+  const isLastStep = typeof onNext !== "function";
   return (
     <Stack h={"100%"} justify="space-between">
       <Stack gap={"md"}>
@@ -48,16 +48,20 @@ const AppointmentRruleStep: FC<Props> = ({ onNext, onPrev }) => {
           radius={0}
           flex={1}
           fullWidth
-          type={"button"}
+          type={isLastStep ? "submit" : "button"}
           variant="filled"
           loading={form.formState.isSubmitting}
           disabled={form.formState.isSubmitting}
-          onClick={async () => {
-            const valid = await form.trigger("recurrenceRule");
-            if (valid) onNext?.();
-          }}
+          onClick={
+            isLastStep
+              ? undefined
+              : async () => {
+                  const valid = await form.trigger("recurrenceRule");
+                  if (valid) onNext?.();
+                }
+          }
         >
-          Next
+          {isLastStep ? "Submit" : "Next"}
         </Button>
       </Group>
     </Stack>
